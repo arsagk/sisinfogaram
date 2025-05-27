@@ -1,0 +1,1 @@
+import{j as l}from"./app-aaeec304.js";function r({pengaturan:a}){return l.jsx(l.Fragment,{children:l.jsx("div",{className:"relative w-full rounded h-full p-2 bg-white",children:l.jsx("iframe",{src:a.map_url,className:"border-0 w-full h-full",allowFullScreen:!1,loading:"lazy"})})})}export{r as M};

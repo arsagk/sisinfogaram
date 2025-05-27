@@ -1,0 +1,251 @@
+import DateInput from "@/Components/Shared/DateInput";
+import Input from "@/Components/Shared/Input";
+import LinkButton from "@/Components/Shared/LinkButton";
+import { LoadingButton } from "@/Components/Shared/LoadingButton";
+import MoneyInput from "@/Components/Shared/MoneyInput";
+import NumberInput from "@/Components/Shared/NumberInput";
+import SelectSearch from "@/Components/Shared/SelectSearch";
+import AdminLayout from "@/Layouts/AdminLayout";
+import { OptionSelect } from "@/types";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
+import moment from "moment";
+import React, { useRef } from "react";
+import "react-datepicker/dist/react-datepicker.css";
+
+const Create = () => {
+    type FormValues = {
+        client_id: string;
+        barang_id: string;
+        kode_pembelian: string;
+        harga_perkg: string;
+        ongkos_perkg: string;
+        jumlah_pembelian: string;
+        jenismuatanOpt: OptionSelect | undefined;
+        barangOpt: OptionSelect | undefined;
+        clientOpt: OptionSelect | undefined;
+        jenis_muatan: string;
+        no_spk: string;
+        tgl_spk: any;
+        with_spk: boolean;
+        _method: string;
+    };
+
+    const {
+        jenismuatanOpts,
+        jenismuatanOpt,
+        clientOpts,
+        barangOpts,
+        clientOpt,
+        barangOpt,
+        base_route,
+    } = usePage<{
+        jenismuatanOpts: OptionSelect[];
+        jenismuatanOpt: OptionSelect;
+        clientOpts: OptionSelect[];
+        clientOpt: OptionSelect;
+        barangOpts: OptionSelect[];
+        barangOpt: OptionSelect;
+        base_route: string;
+    }>().props;
+
+    const { data, setData, errors, post, processing } = useForm<FormValues>({
+        client_id: "",
+        barang_id: "",
+        kode_pembelian: "",
+        harga_perkg: "0",
+        ongkos_perkg: "0",
+        jumlah_pembelian: "0",
+        barangOpt: barangOpt,
+        clientOpt: clientOpt,
+        jenismuatanOpt: jenismuatanOpt,
+        jenis_muatan: jenismuatanOpt.value,
+        with_spk: false,
+        no_spk: "",
+        tgl_spk: new Date(),
+        _method: "POST",
+    });
+
+    function handleSubmit(e: any) {
+        e.preventDefault();
+        post(route(base_route + "pembelians.store"));
+    }
+
+    // function restore() {
+    //     if (confirm('Are you sure you want to restore this user?')) {
+    //         router.put(route('users.restore', user.id));
+    //     }
+    // }
+
+    // const firstInput = useRef<any>(null);
+    return (
+        <AdminLayout>
+            <div className="flex content-center items-center justify-center h-full">
+                <div className="w-full lg:w-2/3 px-4">
+                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg shadow-slate-400 rounded-lg bg-blueGray-200 border-0">
+                        <div className="rounded-t mb-0 px-6 py-6">
+                            <div className="text-center mb-3">
+                                <h6 className="text-blueGray-500 text-lg font-bold">
+                                    New Pembelian
+                                </h6>
+                            </div>
+                            <hr className="mt-6 border-b-1 border-blueGray-300" />
+                        </div>
+                        <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+                            <form onSubmit={handleSubmit}>
+                                <SelectSearch
+                                    name="client_id"
+                                    options={clientOpts}
+                                    onChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            clientOpt: e ? e : undefined,
+                                            client_id: e ? e.value : "",
+                                        }))
+                                    }
+                                    label="Supplier"
+                                    value={data.clientOpt}
+                                    errors={errors.client_id}
+                                />
+                                <SelectSearch
+                                    name="barang_id"
+                                    options={barangOpts}
+                                    onChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            barangOpt: e ? e : undefined,
+                                            barang_id: e ? e.value : "",
+                                        }))
+                                    }
+                                    label="Jenis"
+                                    value={data.barangOpt}
+                                    errors={errors.barang_id}
+                                />
+
+                                <NumberInput
+                                    name="jumlah_pembelian"
+                                    label="Jumlah (Kg)"
+                                    errors={errors.jumlah_pembelian}
+                                    autoComplete="off"
+                                    value={data.jumlah_pembelian}
+                                    onValueChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            jumlah_pembelian: e.value,
+                                        }))
+                                    }
+                                />
+                                <MoneyInput
+                                    name="harga_perkg"
+                                    label="Harga/Kg"
+                                    errors={errors.harga_perkg}
+                                    autoComplete="off"
+                                    value={data.harga_perkg}
+                                    onValueChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            harga_perkg: e.value,
+                                        }))
+                                    }
+                                />
+                                <MoneyInput
+                                    name="ongkos_perkg"
+                                    label="Ongkos/Kg"
+                                    errors={errors.ongkos_perkg}
+                                    autoComplete="off"
+                                    value={data.ongkos_perkg}
+                                    onValueChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            ongkos_perkg: e.value,
+                                        }))
+                                    }
+                                />
+
+                                <SelectSearch
+                                    name="jenis_muatan"
+                                    options={jenismuatanOpts}
+                                    onChange={(e) =>
+                                        setData((prev) => ({
+                                            ...prev,
+                                            jenismuatanOpt: e ? e : undefined,
+                                            jenis_muatan: e ? e.value : "",
+                                        }))
+                                    }
+                                    label="Satuan"
+                                    value={data.jenismuatanOpt}
+                                    errors={errors.jenis_muatan}
+                                />
+                                <div className="mb-4">
+                                    <label className="inline-flex items-center cursor-pointer">
+                                        <input
+                                            id="customCheckLogin"
+                                            type="checkbox"
+                                            className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                                            checked={data.with_spk}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "with_spk",
+                                                    e.target.checked
+                                                )
+                                            }
+                                        />
+                                        <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                                            With SPK
+                                        </span>
+                                    </label>
+                                </div>
+                                {data.with_spk ? (
+                                    <>
+                                        <Input
+                                            name="no_spk"
+                                            label="No SPK"
+                                            errors={errors.no_spk}
+                                            value={data.no_spk}
+                                            type="text"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "no_spk",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        <DateInput
+                                            label="Tanggal SPK"
+                                            selected={data.tgl_spk}
+                                            value={data.tgl_spk}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "tgl_spk",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                    </>
+                                ) : null}
+                                <div className="flex items-center justify-between">
+                                    <LinkButton
+                                        theme="blueGrey"
+                                        href={route(
+                                            base_route + "pembelians.index"
+                                        )}
+                                    >
+                                        <span>Kembali</span>
+                                    </LinkButton>
+                                    <LoadingButton
+                                        theme="black"
+                                        loading={processing}
+                                        type="submit"
+                                    >
+                                        <span>Simpan</span>
+                                    </LoadingButton>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AdminLayout>
+    );
+};
+
+export default Create;
